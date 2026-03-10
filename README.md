@@ -15,6 +15,14 @@ A classic Reversi (Othello) game implemented in Python using Pygame-CE. Play aga
 - New game option
 - Standalone executable available
 
+## Screenshots
+
+![Game Screenshot 1](screenshots/0.png)
+
+![Game Screenshot 2](screenshots/1.png)
+
+![Game Screenshot 3](screenshots/2.png)
+
 ## Requirements
 
 - Python 3.6+ (for source code)
