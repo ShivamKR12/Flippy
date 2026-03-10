@@ -35,7 +35,7 @@ def main():
     MAINCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     pygame.display.set_caption('Othello')
-    logo = pygame.image.load('logo.png')
+    logo = pygame.image.load('flippylogo.png')
     pygame.display.set_icon(logo)
     FONT = pygame.font.Font('freesansbold.ttf', 16)
     BIGFONT = pygame.font.Font('freesansbold.ttf', 32)
