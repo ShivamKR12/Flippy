@@ -27,8 +27,11 @@ jobs:
         run: |
           pyinstaller flippy.spec
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: flippy-windows-build
-          path: dist/
+          tag_name: v${{ github.run_number }}
+          name: Flippy v${{ github.run_number }}
+          files: dist/flippy.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
