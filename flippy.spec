@@ -5,7 +5,7 @@ a = Analysis(
     ['flippy.py'],
     pathex=[],
     binaries=[],
-    datas=[('flippyboard.png', 'flippyboard.png'), ('flippybackground.png', 'flippybackground.png'), ('flippylogo.png', 'flippylogo.png')],
+    datas=[('flippyboard.png', '.'), ('flippybackground.png', '.'), ('flippylogo.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
