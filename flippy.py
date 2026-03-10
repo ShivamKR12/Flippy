@@ -1,4 +1,4 @@
-import random, sys, pygame, time, copy
+import random, sys, pygame, time, copy, os
 from pygame.locals import *
 
 FPS = 10
@@ -28,6 +28,13 @@ GRIDLINECOLOR = BLACK
 TEXTCOLOR = WHITE
 HINTCOLOR = BROWN
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 def main():
     global MAINCLOCK, DISPLAYSURF, FONT, BIGFONT, BGIMAGE
     
@@ -35,17 +42,17 @@ def main():
     MAINCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     pygame.display.set_caption('flippy')
-    logo = pygame.image.load('flippylogo.png')
+    logo = pygame.image.load(resource_path('flippylogo.png'))
     pygame.display.set_icon(logo)
     FONT = pygame.font.Font('freesansbold.ttf', 16)
     BIGFONT = pygame.font.Font('freesansbold.ttf', 32)
     
-    boardImage = pygame.image.load('flippyboard.png')
+    boardImage = pygame.image.load(resource_path('flippyboard.png'))
     boardImage = pygame.transform.smoothscale(boardImage, (BOARDWIDTH * SPACESIZE, BOARDHEIGHT * SPACESIZE))
     boardImageRect = boardImage.get_rect()
     boardImageRect.topleft = (XMARGIN, YMARGIN)
     
-    BGIMAGE = pygame.image.load('flippybackground.png')
+    BGIMAGE = pygame.image.load(resource_path('flippybackground.png'))
     BGIMAGE = pygame.transform.smoothscale(BGIMAGE, (WINDOWWIDTH, WINDOWHEIGHT))
     BGIMAGE.blit(boardImage, boardImageRect)
     
