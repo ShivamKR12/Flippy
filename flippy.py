@@ -91,12 +91,15 @@ def resource_path(relative_path):
     Returns:
     str: The absolute path to the resource file.
     """
+    
     # Try to get the path from PyInstaller's temporary directory.
     try:
         base_path = sys._MEIPASS
+    
     # If not packaged, use the current working directory.
     except Exception:
         base_path = os.path.abspath(".")
+    
     # Join the base path with the relative path to get the full path.
     return os.path.join(base_path, relative_path)
 
@@ -111,6 +114,7 @@ def main():
     No parameters.
     No return value.
     """
+    
     # Declare global variables that will be used throughout the game.
     # Global variables are accessible from any function in the file.
     global MAINCLOCK, DISPLAYSURF, FONT, BIGFONT, BGIMAGE
@@ -169,8 +173,10 @@ def main():
     
     # Main game loop: Keep playing games until the player quits.
     while True:
+        
         # runGame() returns True if the player wants to play again, False otherwise.
         if runGame() == False:
+            
             # If runGame returns False, exit the loop and end the program.
             break
 
@@ -188,15 +194,19 @@ def getSpaceClicked(mousex, mousey):
     Returns:
     tuple or None: (x, y) board coordinates if on the board, None otherwise.
     """
+    
     # Calculate the column: Subtract the left margin, then divide by space size.
     x = (mousex - XMARGIN) // SPACESIZE
     # Integer division (//) gives the grid position.
     # Calculate the row: Subtract the top margin, then divide by space size.
     y = (mousey - YMARGIN) // SPACESIZE
+    
     # Check if the calculated position is within the board boundaries.
     if isOnBoard(x, y):
+        
         # Return the board coordinates as a tuple.
         return (x, y)
+    
     # If not on the board, return None.
     return None
 
@@ -215,6 +225,7 @@ def drawInfo(boardToDraw, playerTile, computerTile, turn):
     
     No return value.
     """
+    
     # Get the current scores from the board.
     scores = getScoreOfBoard(boardToDraw)
     # Get the player's score.
@@ -266,12 +277,16 @@ def getComputerMove(mainBoard, computerTile):
     Returns:
     tuple or None: (x, y) coordinates of the move, or None if no moves available.
     """
+    
     # Get a list of all valid moves for the computer.
     validMoves = getValidMoves(mainBoard, computerTile)
+    
     # If there are valid moves,
     if validMoves:
+        
         # Randomly pick one and return it.
         return random.choice(validMoves)
+    
     # If no valid moves, return None.
     return None
 
@@ -288,6 +303,7 @@ def runGame():
     Returns:
     bool: True if the player wants to play again, False otherwise.
     """
+    
     # Create a new empty board.
     mainBoard = getNewBoard()
     # Set up the starting position with 4 tiles in the center.
@@ -317,46 +333,62 @@ def runGame():
     
     # Main game loop for this game.
     while True:
+        
         # It's the player's turn.
         if turn == 'player':
+            
             # Get all valid moves for the player.
             validMoves = getValidMoves(mainBoard, playerTile)
+            
             # If the player has moves,
             if validMoves:
+                
                 # Reset the pass counter.
                 consecutivePasses = 0
                 # Variable to store the player's chosen move.
                 movexy = None
+                
                 # Loop until the player makes a valid move.
                 while movexy == None:
+                    
                     if showHints:
                         # If hints are on, show the board with hint markers.
                         boardToDraw = getBoardWithValidMoves(mainBoard, playerTile)
+                    
                     else:
                         # Otherwise, show the normal board.
                         boardToDraw = mainBoard
+                    
                     # Check if the player wants to quit.
                     checkForQuit()
+                    
                     # Process all pending events.
                     for event in pygame.event.get():
+                        
                         # If the mouse was clicked,
                         if event.type == MOUSEBUTTONUP:
+                            
                             # Get the mouse position.
                             mousex, mousey = event.pos
+                            
                             # If clicked on "New Game",
                             if newGameRect.collidepoint((mousex, mousey)):
                                 # Start a new game.
                                 return True
+                            
                             # If clicked on "Hints",
                             elif hintsRect.collidepoint((mousex, mousey)):
                                 # Toggle hints on/off.
                                 showHints = not showHints
+                            
                             # Convert mouse position to board coordinates.
                             movexy = getSpaceClicked(mousex, mousey)
+                            
                             # If clicked on board but not a valid move,
                             if movexy != None and not isValidMove(mainBoard, playerTile, movexy[0], movexy[1]):
                                 # Ignore it.
                                 movexy = None
+                    
                     # Draw the board (with or without hints).
                     drawBoard(boardToDraw)
                     # Draw the scores and turn info.
@@ -369,20 +401,26 @@ def runGame():
                     MAINCLOCK.tick(FPS)
                     # Update the display to show the changes.
                     pygame.display.update()
+                
                 # Make the player's move, with animation.
                 makeMove(mainBoard, playerTile, movexy[0], movexy[1], True, mainBoard)
                 # Switch to computer's turn.
                 turn = 'computer'
+            
             # If player has no valid moves,
             else:
+                
                 # Increment pass counter.
                 consecutivePasses += 1
                 # Pass to computer.
                 turn = 'computer'
+        
         # It's the computer's turn.
         else:
+            
             # Get computer's valid moves.
             validMoves = getValidMoves(mainBoard, computerTile)
+            
             # If computer has moves,
             if validMoves:
                 # Reset pass counter.
@@ -403,6 +441,7 @@ def runGame():
                 makeMove(mainBoard, computerTile, x, y, True, mainBoard)
                 # Switch to player's turn.
                 turn = 'player'
+            
             # If computer has no moves,
             else:
                 # Increment pass counter.
@@ -422,12 +461,15 @@ def runGame():
     
     # Get final scores.
     scores = getScoreOfBoard(mainBoard)
+    
     if scores[playerTile] > scores[computerTile]:
         # Player won.
         text = 'You beat the computer by %s points! Congratulations!' % (scores[playerTile] - scores[computerTile])
+    
     elif scores[playerTile] < scores[computerTile]:
         # Player lost.
         text = 'You lost. The computer beat you by %s points.' % (scores[computerTile] - scores[playerTile])
+    
     else:
         # Tie game.
         text = 'The game was a tie!'
@@ -457,19 +499,24 @@ def runGame():
     
     # Loop to wait for player's choice to play again or quit.
     while True:
+        
         # Check for quit events.
         checkForQuit()
+        
         for event in pygame.event.get():
             if event.type == MOUSEBUTTONUP:
                 mousex, mousey = event.pos
+                
                 # If clicked "Yes",
                 if yesRect.collidepoint((mousex, mousey)):
                     # Play again.
                     return True
+                
                 # If clicked "No",
                 elif noRect.collidepoint((mousex, mousey)):
                     # Quit.
                     return False
+        
         # Draw the result text.
         DISPLAYSURF.blit(textSurf, textRect)
         DISPLAYSURF.blit(text2Surf, text2Rect)
@@ -495,6 +542,7 @@ def translateBoardToPixelCoord(x, y):
     Returns:
     tuple: (pixel_x, pixel_y) center of the space.
     """
+    
     # Add margin, multiply by space size, add half space to get center.
     return XMARGIN + x * SPACESIZE + int(SPACESIZE / 2), YMARGIN + y * SPACESIZE + int(SPACESIZE / 2)
 
@@ -513,12 +561,15 @@ def animateTileChange(tilesToFlip, tileColor, additionalTile, mainBoard):
     
     No return value.
     """
+    
     if tileColor == WHITE_TILE:
         # New tile is white.
         additionalTileColor = WHITE
+    
     else:
         # New tile is black.
         additionalTileColor = BLACK
+    
     # Get pixel position of the new tile.
     additionalTileX, additionalTileY = translateBoardToPixelCoord(additionalTile[0], additionalTile[1])
     # Draw the new tile immediately.
@@ -535,16 +586,19 @@ def animateTileChange(tilesToFlip, tileColor, additionalTile, mainBoard):
         if tileColor == WHITE_TILE:
             # For white tiles, start from black (0) to white (255).
             color = tuple([rgbValues] * 3)
+        
         elif tileColor == BLACK_TILE:
             # For black tiles, start from white (255) to black (0).
             color = tuple([255 - rgbValues] * 3)
         
         # For each tile to flip,
         for x, y in tilesToFlip:
+            
             # Get its pixel position.
             centerx, centery = translateBoardToPixelCoord(x, y)
             # Draw it with the current color.
             pygame.draw.circle(DISPLAYSURF, color, (centerx, centery), int(SPACESIZE / 2) - 4)
+        
         # Redraw the new tile.
         pygame.draw.circle(DISPLAYSURF, additionalTileColor, (additionalTileX, additionalTileY), int(SPACESIZE / 2) - 4)
         
@@ -568,24 +622,33 @@ def drawBoard(board):
     
     No return value.
     """
+    
     # Draw the background image (which includes the board grid).
     DISPLAYSURF.blit(BGIMAGE, BGIMAGE.get_rect())
+    
     # Loop through each column.
     for x in range(BOARDWIDTH):
+        
         # Loop through each row.
         for y in range(BOARDHEIGHT):
+            
             # Get the pixel center of this space.
             centerx, centery = translateBoardToPixelCoord(x, y)
+            
             # If there's a tile here,
             if board[x][y] == WHITE_TILE or board[x][y] == BLACK_TILE:
+                
                 if board[x][y] == WHITE_TILE:
                     # Set color to white.
                     tileColor = WHITE
+                
                 else:
                     # Set color to black.
                     tileColor = BLACK
+                
                 # Draw a circle for the tile.
                 pygame.draw.circle(DISPLAYSURF, tileColor, (centerx, centery), int(SPACESIZE / 2) - 4)
+            
             # If this is a hint,
             if board[x][y] == HINT_TILE:
                 # Draw a small square hint marker.
@@ -593,14 +656,17 @@ def drawBoard(board):
 
     # Draw the vertical grid lines.
     for x in range(BOARDWIDTH + 1):
+        
         startx = (x * SPACESIZE) + XMARGIN
         starty = YMARGIN
         endx = (x * SPACESIZE) + XMARGIN
         endy = YMARGIN + (BOARDHEIGHT * SPACESIZE)
         # Draw a vertical line.
         pygame.draw.line(DISPLAYSURF, GRIDLINECOLOR, (startx, starty), (endx, endy))
+    
     # Draw the horizontal grid lines.
     for y in range(BOARDHEIGHT + 1):
+        
         startx = XMARGIN
         starty = (y * SPACESIZE) + YMARGIN
         endx = XMARGIN + (BOARDWIDTH * SPACESIZE)
@@ -620,12 +686,15 @@ def getNewBoard():
     Returns:
     list: 2D list representing the board.
     """
+    
     # Start with empty list.
     board = []
+    
     # For each column,
     for i in range(BOARDWIDTH):
         # Add a row of empty spaces.
         board.append([EMPTY_SPACE] * BOARDHEIGHT)
+    
     # Return the new board.
     return board
 
@@ -640,12 +709,15 @@ def resetBoard(board):
     
     No return value.
     """
+    
     # Loop through columns.
     for x in range(BOARDWIDTH):
+        
         # Loop through rows.
         for y in range(BOARDHEIGHT):
             # Set to empty.
             board[x][y] = EMPTY_SPACE
+    
     # Place the starting tiles:
     # Standard Othello starting position.
     board[3][3] = WHITE_TILE
@@ -663,18 +735,23 @@ def getScoreOfBoard(board):
     Returns:
     dict: {'WHITE_TILE': count, 'BLACK_TILE': count}
     """
+    
     # White score.
     xscore = 0
     # Black score.
     oscore = 0
+    
     for x in range(BOARDWIDTH):
         for y in range(BOARDHEIGHT):
+            
             if board[x][y] == WHITE_TILE:
                 # Count white tiles.
                 xscore += 1
+            
             if board[x][y] == BLACK_TILE:
                 # Count black tiles.
                 oscore += 1
+    
     # Return as dictionary.
     return {WHITE_TILE:xscore, BLACK_TILE:oscore}
 
@@ -689,6 +766,7 @@ def enterPlayerTile():
     Returns:
     tuple: (playerTile, computerTile) as strings.
     """
+    
     # Render the question text.
     textSurf = FONT.render('Do you want to be white or black?', True, TEXTCOLOR, TEXTBGCOLOR1)
     textRect = textSurf.get_rect()
@@ -704,21 +782,27 @@ def enterPlayerTile():
     oRect = oSurf.get_rect()
     # Position right.
     oRect.center = (int(WINDOWWIDTH / 2) + 60, int(WINDOWHEIGHT / 2) + 40)
+    
     # Loop until choice made.
     while True:
         # Check for quit.
         checkForQuit()
+        
         for event in pygame.event.get():
+            
             if event.type == MOUSEBUTTONUP:
                 mousex, mousey = event.pos
+                
                 # Chose white.
                 if xRect.collidepoint((mousex, mousey)):
                     # Player white, computer black.
                     return [WHITE_TILE, BLACK_TILE]
+                
                 # Chose black.
                 elif oRect.collidepoint((mousex, mousey)):
                     # Player black, computer white.
                     return [BLACK_TILE, WHITE_TILE]
+        
         # Draw question.
         DISPLAYSURF.blit(textSurf, textRect)
         DISPLAYSURF.blit(xSurf, xRect)
@@ -747,21 +831,27 @@ def makeMove(board, tile, xstart, ystart, realMove=False, mainBoard=None):
     Returns:
     bool: True if move was valid, False otherwise.
     """
+    
     # Check if move is valid and get tiles to flip.
     tilesToFlip = isValidMove(board, tile, xstart, ystart)
+    
     # If invalid,
     if tilesToFlip == False:
         # Return False.
         return False
+    
     # Place the tile.
     board[xstart][ystart] = tile
+    
     # If real move,
     if realMove:
         # Animate the flip.
         animateTileChange(tilesToFlip, tile, (xstart, ystart), mainBoard if mainBoard is not None else board)
+        
         # Then actually flip the tiles.
         for x, y in tilesToFlip:
             board[x][y] = tile
+    
     # Return success.
     return True
 
@@ -781,64 +871,83 @@ def isValidMove(board, tile, xstart, ystart):
     Returns:
     list or False: List of (x, y) tiles to flip, or False if invalid.
     """
+    
     # If space not empty or out of bounds,
     if board[xstart][ystart] != EMPTY_SPACE or not isOnBoard(xstart, ystart):
         # Invalid.
         return False
+    
     # Temporarily place the tile.
     board[xstart][ystart] = tile
     # Get opponent's color.
     otherTile = getOpponentTile(tile)
     # List to collect tiles to flip.
     tilesToFlip = []
+    
     # Check all 8 directions.
     for xdirection, ydirection in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]:
+        
         # Start from the placed tile.
         x, y = xstart, ystart
         x += xdirection
         # Move in this direction.
         y += ydirection
+        
         # If next space has opponent tile,
         if isOnBoard(x, y) and board[x][y] == otherTile:
+            
             x += xdirection
             # Continue in direction.
             y += ydirection
             # If went off board,
+            
             if not isOnBoard(x, y):
                 # Skip this direction.
                 continue
+            
             # While still opponent tiles,
             while board[x][y] == otherTile:
+                
                 x += xdirection
                 # Keep going.
                 y += ydirection
+                
                 # If off board,
                 if not isOnBoard(x, y):
                     # Stop.
                     break
+            
             # If ended off board,
             if not isOnBoard(x, y):
                 # Skip.
                 continue
+            
             # If ended on own tile,
             if board[x][y] == tile:
+                
                 # Backtrack and collect tiles to flip.
                 while True:
+                    
                     x -= xdirection
                     # Move back.
                     y -= ydirection
+                    
                     # Until back at start,
                     if x == xstart and y == ystart:
                         # Done.
                         break
+                    
                     # Add to flip list.
                     tilesToFlip.append([x, y])
+    
     # Remove temporary tile.
     board[xstart][ystart] = EMPTY_SPACE
+    
     # If no tiles to flip,
     if len(tilesToFlip) == 0:
         # Invalid move.
         return False
+    
     # Return the list of tiles to flip.
     return tilesToFlip
 
@@ -853,6 +962,7 @@ def isOnBoard(x, y):
     Returns:
     bool: True if on board, False otherwise.
     """
+    
     # Check if x and y are between 0 and board size - 1.
     return x >= 0 and x < BOARDWIDTH and y >= 0 and y < BOARDHEIGHT
 
@@ -867,12 +977,15 @@ def getBoardWithValidMoves(board, tile):
     Returns:
     list: A new board with HINT_TILE in valid move positions.
     """
+    
     # Make a deep copy of the board.
     dupeBoard = copy.deepcopy(board)
+    
     # For each valid move,
     for x, y in getValidMoves(dupeBoard, tile):
         # Place a hint.
         dupeBoard[x][y] = HINT_TILE
+    
     # Return the modified copy.
     return dupeBoard
 
@@ -887,16 +1000,21 @@ def getValidMoves(board, tile):
     Returns:
     list: List of (x, y) tuples for valid moves.
     """
+    
     # Start empty list.
     validMoves = []
+    
     # Check every column.
     for x in range(BOARDWIDTH):
+        
         # Check every row.
         for y in range(BOARDHEIGHT):
+            
             # If move is valid,
             if isValidMove(board, tile, x, y) != False:
                 # Add to list.
                 validMoves.append((x, y))
+    
     # Return the list.
     return validMoves
 
@@ -910,9 +1028,11 @@ def getOpponentTile(tile):
     Returns:
     str: The opposite color.
     """
+    
     if tile == WHITE_TILE:
         # Opposite of white is black.
         return BLACK_TILE
+    
     else:
         # Opposite of black is white.
         return WHITE_TILE
@@ -926,16 +1046,20 @@ def checkForQuit():
     No parameters.
     No return value.
     """
+    
     # If window close event,
     for event in pygame.event.get(QUIT):
         # Quit.
         terminate()
+    
     # If key released,
     for event in pygame.event.get(KEYUP):
+        
         # If Escape key,
         if event.key == K_ESCAPE:
             # Quit.
             terminate()
+        
         else:
             # Otherwise, put the event back for other handlers.
             pygame.event.post(event)
@@ -949,6 +1073,7 @@ def terminate():
     No parameters.
     No return value.
     """
+    
     # Shut down Pygame.
     pygame.quit()
     # Exit the program.
