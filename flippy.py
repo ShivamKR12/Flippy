@@ -12,6 +12,8 @@ from pygame.locals import *
 # This includes things like QUIT, MOUSEBUTTONUP, KEYUP, K_ESCAPE, etc.
 # These are used for handling events like closing the window or key presses.
 
+import svgwrite
+
 # Game constants: These are fixed values that define the game's appearance and behavior.
 # They are written in ALL CAPS by convention to indicate they shouldn't be changed during the game.
 
@@ -76,6 +78,56 @@ GRIDLINECOLOR = BLACK
 TEXTCOLOR = WHITE
 # Color of the hint markers.
 HINTCOLOR = BROWN
+
+def save_board_to_svg(board, filename="flippy_board_state.svg"):
+    """
+    Reads the current Othello board state and exports it as a scalable vector graphic (SVG).
+    """
+    # Use the same constants from your game
+    WIDTH = BOARDWIDTH * SPACESIZE
+    HEIGHT = BOARDHEIGHT * SPACESIZE
+
+    # Initialize the SVG drawing canvas
+    dwg = svgwrite.Drawing(filename, size=(WIDTH, HEIGHT))
+
+    # 1. Draw the green background (using your GREEN RGB values)
+    dwg.add(dwg.rect(insert=(0, 0), size=(WIDTH, HEIGHT), fill='rgb(0, 155, 0)'))
+
+    # 2. Draw the grid lines
+    # Vertical lines
+    for x in range(BOARDWIDTH + 1):
+        start_pos = (x * SPACESIZE, 0)
+        end_pos = (x * SPACESIZE, HEIGHT)
+        dwg.add(dwg.line(start=start_pos, end=end_pos, stroke='black', stroke_width=2))
+
+    # Horizontal lines
+    for y in range(BOARDHEIGHT + 1):
+        start_pos = (0, y * SPACESIZE)
+        end_pos = (WIDTH, y * SPACESIZE)
+        dwg.add(dwg.line(start=start_pos, end=end_pos, stroke='black', stroke_width=2))
+
+    # 3. Loop through the board array and draw the tiles
+    for x in range(BOARDWIDTH):
+        for y in range(BOARDHEIGHT):
+            tile = board[x][y]
+            
+            if tile in (WHITE_TILE, BLACK_TILE):
+                # Calculate the center of the space
+                center_x = (x * SPACESIZE) + (SPACESIZE / 2)
+                center_y = (y * SPACESIZE) + (SPACESIZE / 2)
+                
+                # Determine color
+                fill_color = 'white' if tile == WHITE_TILE else 'black'
+                
+                # Calculate radius exactly as you did in Pygame
+                radius = int(SPACESIZE / 2) - 4
+                
+                # Add the circle to the SVG
+                dwg.add(dwg.circle(center=(center_x, center_y), r=radius, fill=fill_color))
+
+    # Save the generated SVG to disk
+    dwg.save()
+    print(f"Board state successfully saved to {filename}")
 
 def resource_path(relative_path):
     """
@@ -388,6 +440,12 @@ def runGame():
                             if movexy != None and not isValidMove(mainBoard, playerTile, movexy[0], movexy[1]):
                                 # Ignore it.
                                 movexy = None
+
+                        # Add a check for saving the SVG
+                        if event.type == KEYUP:
+                            if event.key == pygame.K_s:
+                                # Pressing 'S' saves the current state
+                                save_board_to_svg(mainBoard)
                     
                     # Draw the board (with or without hints).
                     drawBoard(boardToDraw)
