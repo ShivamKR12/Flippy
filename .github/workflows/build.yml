@@ -88,14 +88,23 @@ jobs:
       - name: Publish Windows to itch.io via Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: butler push artifacts/flippy-Windows/flippy-windows.zip shivamkr12/flippy:windows --userversion v${{ github.run_number }}
+        run: |
+          mkdir -p push_win
+          cp artifacts/flippy-Windows/flippy-windows.zip push_win/
+          butler push push_win shivamkr12/flippy:windows --userversion v${{ github.run_number }}
 
       - name: Publish Linux to itch.io via Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: butler push artifacts/flippy-Linux/flippy-linux.tar.gz shivamkr12/flippy:linux --userversion v${{ github.run_number }}
+        run: |
+          mkdir -p push_linux
+          cp artifacts/flippy-Linux/flippy-linux.tar.gz push_linux/
+          butler push push_linux shivamkr12/flippy:linux --userversion v${{ github.run_number }}
 
       - name: Publish macOS to itch.io via Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: butler push artifacts/flippy-macOS/flippy-macos.zip shivamkr12/flippy:mac --userversion v${{ github.run_number }}
+        run: |
+          mkdir -p push_mac
+          cp artifacts/flippy-macOS/flippy-macos.zip push_mac/
+          butler push push_mac shivamkr12/flippy:mac --userversion v${{ github.run_number }}
