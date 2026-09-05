@@ -27,6 +27,12 @@ A faithful implementation of the classic Reversi (also known as Othello) board g
 *   **Game Management:** Easily start a new game at any time to practice or replay.
 *   **Cross-platform support:** Playable on Windows, macOS, and Linux.
 
+## Screenshots
+
+![0](screenshots/0.png)
+![1](screenshots/1.png)
+![2](screenshots/2.png)
+
 ## 🎮 Getting Started
 
 You can easily play the game by downloading the latest executable for your operating system.
@@ -72,7 +78,7 @@ If you want to build the game yourself, you'll need Python 3 and some dependenci
 
 4.  **Run the game:**
     ```sh
-    python flippy.py
+    python main.py
     ```
 
 5.  **Build the executable:**

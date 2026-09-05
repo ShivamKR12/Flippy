@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['flippy.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=[('flippyboard.png', '.'), ('flippybackground.png', '.'), ('flippylogo.png', '.')],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='flippy',
+    name='Flippy',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -35,4 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['flippy_board_state.ico']
 )
