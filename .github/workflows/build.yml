@@ -3,7 +3,7 @@ name: Build Desktop Executables
 on:
   push:
     paths:
-      - 'flippy.py'
+      - 'main.py'
       - 'flippy.spec'
       - '.github/workflows/build.yml'
   workflow_dispatch:
@@ -44,15 +44,15 @@ jobs:
 
       - name: Archive Windows executable
         if: runner.os == 'Windows'
-        run: Compress-Archive -Path dist/flippy.exe -DestinationPath flippy-windows.zip
+        run: Compress-Archive -Path dist/Flippy.exe -DestinationPath flippy-windows.zip
 
       - name: Archive Linux executable
         if: runner.os == 'Linux'
-        run: tar -czvf flippy-linux.tar.gz -C dist flippy
+        run: tar -czvf flippy-linux.tar.gz -C dist Flippy
 
       - name: Archive macOS application
         if: runner.os == 'macOS'
-        run: zip -j flippy-macos.zip dist/flippy
+        run: zip -j flippy-macos.zip dist/Flippy
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -81,3 +81,21 @@ jobs:
             artifacts/flippy-Windows/flippy-windows.zip
             artifacts/flippy-Linux/flippy-linux.tar.gz
             artifacts/flippy-macOS/flippy-macos.zip
+
+      - name: Setup Butler
+        uses: remarkablegames/setup-butler@v1
+
+      - name: Publish Windows to itch.io via Butler
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: butler push artifacts/flippy-Windows/flippy-windows.zip shivamkr12/flippy:windows --userversion v${{ github.run_number }}
+
+      - name: Publish Linux to itch.io via Butler
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: butler push artifacts/flippy-Linux/flippy-linux.tar.gz shivamkr12/flippy:linux --userversion v${{ github.run_number }}
+
+      - name: Publish macOS to itch.io via Butler
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: butler push artifacts/flippy-macOS/flippy-macos.zip shivamkr12/flippy:mac --userversion v${{ github.run_number }}
